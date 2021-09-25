@@ -24,12 +24,13 @@ export default class Application extends EventEmitter {
   
   async _load() {
     const resp = await fetch(`https://swapi.boom.dev/api/planets`);
-    // if(resp.status == 200){
-    //   this._loading = 'none';
-    // }
+   if(!resp.ok) {
+     throw new Error(`${resp.status}`);
+   } else {
     const planets = await resp.json();
     const pResults = planets.results;
     return pResults;
+  }
   }
   _stopLoading() {
     
@@ -40,7 +41,6 @@ export default class Application extends EventEmitter {
   _create(){
     this._load().then((planets) => {
       this._loading.style.display = 'none';
-      console.log(this._loading);
       planets.forEach((element) => {
         const { name, terrain, population } = element;
         const box = document.createElement("div");
