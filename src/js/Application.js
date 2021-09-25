@@ -7,50 +7,54 @@ export default class Application extends EventEmitter {
       READY: "ready",
     };
   }
-  
 
   constructor() {
     super();
-    this._create() 
-    this._loading = document.querySelector('progress');
-    
-    
-    
 
+    this._loading = document.querySelector("progress");
+    this._create();
     this.emit(Application.events.READY);
   }
-  
-  
-  
-  async _load() {
-    const resp = await fetch(`https://swapi.boom.dev/api/planets`);
+
+  async _load(number) {
+    const resp = await fetch(
+      `https://swapi.boom.dev/api/planets?page=${number}`
+    );
     const planets = await resp.json();
     const data = planets.results;
-    console.log(data);
+    this.planetsUrl = data.next;
     return data;
   }
   _stopLoading() {
-    
+    this._loading.style.display = "none";
   }
-  _startLoading() {
-    
-  }
-  _create(){
-    this._load().then((planets) => {
-      this._loading.style.display = 'none';
-      planets.forEach((element) => {
-        const { name, terrain, population } = element;
-        const box = document.createElement("div");
-        box.classList.add("box");
 
-        box.innerHTML = this._render({
-          name,
-          terrain,
-          population,
+  _startLoading() {
+    this._loading.style.display = "block";
+  }
+
+  _create() {
+    for (let index = 1; index <= 6; index++) {
+      this._load(index).then((planets) => {
+        this._startLoading()
+        planets.forEach((element) => {
+          const { name, terrain, population } = element;
+          const box = document.createElement("div");
+          box.classList.add("box");
+
+          box.innerHTML = this._render({
+            name,
+            terrain,
+            population,
+          });
+
+          document.body.querySelector(".main").appendChild(box);
         });
-        document.body.querySelector(".main").appendChild(box);
+        this._stopLoading()
+        this.pageNumber++;
+    
       });
-    });
+    }
   }
   _render({ name, terrain, population }) {
     return `
