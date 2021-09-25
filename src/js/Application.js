@@ -11,8 +11,7 @@ export default class Application extends EventEmitter {
 
   constructor() {
     super();
-    setTimeout(this._create() 
-    ,1000)
+    this._create() 
     this._loading = document.querySelector('progress');
     
     
