@@ -11,7 +11,8 @@ export default class Application extends EventEmitter {
 
   constructor() {
     super();
-    this._create();
+    setTimeout(this._create() 
+    ,1000)
     this._loading = document.querySelector('progress');
     
     
@@ -24,13 +25,10 @@ export default class Application extends EventEmitter {
   
   async _load() {
     const resp = await fetch(`https://swapi.boom.dev/api/planets`);
-   if(!resp.ok) {
-     throw new Error(`${resp.status}`);
-   } else {
     const planets = await resp.json();
-    const pResults = planets.results;
-    return pResults;
-  }
+    const data = planets.results;
+    console.log(data);
+    return data;
   }
   _stopLoading() {
     
