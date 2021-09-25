@@ -7,14 +7,41 @@ export default class Application extends EventEmitter {
       READY: "ready",
     };
   }
+  
 
   constructor() {
     super();
+    this._create();
+    this._loading = document.querySelector('progress');
+    
+    
     
 
+    this.emit(Application.events.READY);
+  }
+  
+  
+  
+  async _load() {
+    const resp = await fetch(`https://swapi.boom.dev/api/planets`);
+    // if(resp.status == 200){
+    //   this._loading = 'none';
+    // }
+    const planets = await resp.json();
+    const pResults = planets.results;
+    return pResults;
+  }
+  _stopLoading() {
+    
+  }
+  _startLoading() {
+    
+  }
+  _create(){
     this._load().then((planets) => {
+      this._loading.style.display = 'none';
+      console.log(this._loading);
       planets.forEach((element) => {
-        this._startLoading();
         const { name, terrain, population } = element;
         const box = document.createElement("div");
         box.classList.add("box");
@@ -26,21 +53,7 @@ export default class Application extends EventEmitter {
         });
         document.body.querySelector(".main").appendChild(box);
       });
-    }).then(()=>{this._stopLoading()});
-
-    this.emit(Application.events.READY);
-  }
-  async _load() {
-    const resp = await fetch(`https://swapi.boom.dev/api/planets`);
-    const planets = await resp.json();
-    const pResults = planets.results;
-    return pResults;
-  }
-  _stopLoading() {
-    document.querySelector('.progress').style.display = "none";
-  }
-  _startLoading() {
-    document.querySelector('.progress').style.display = "block";
+    });
   }
   _render({ name, terrain, population }) {
     return `
